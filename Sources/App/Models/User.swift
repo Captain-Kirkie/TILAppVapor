@@ -12,6 +12,10 @@ final class User: Model {
     @Field(key: "username")
     var userName: String
     
+    // user has one to many relationship with Acronym.... a user can hold many acronymsØ
+    @Children(for: \.$user)
+    var acronyms: [Acronym]
+    
     init() {}
     
     init(id: UUID? = nil, name: String, username: String) {
@@ -24,4 +28,5 @@ final class User: Model {
     
 }
 // what is this doing?
+// make new model conform to content
 extension User: Content {}

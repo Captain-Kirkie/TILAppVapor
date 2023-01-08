@@ -15,12 +15,15 @@ public func configure(_ app: Application) throws {
         database: Environment.get("DATABASE_NAME") ?? "vapor_database"
     ), as: .psql)
 
-    // add table, run acronym migration
-    app.migrations.add(CreateAcronym())
     
     // add user
+    // must create user before Acronym because acronym refers to it
     app.migrations.add(CreateUser())
     
+    
+    // add table, run acronym migration
+    app.migrations.add(CreateAcronym())
+
     // add category
     app.migrations.add(CreateCategory())
     

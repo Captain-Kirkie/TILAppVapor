@@ -8,6 +8,7 @@ struct CreateAcronym: Migration {
             .id() // add fields, create table
             .field("short", .string, .required)
             .field("long", .string, .required)
+            .field("userID", .uuid, .required, .references("users", "id")) // build relationship to user table
             .create()
     }
     

@@ -26,6 +26,7 @@ struct CategoryController: RouteCollection {
         return category.save(on: req.db).map { category }
     }
     
+    //MARK: PUT
     func updateHandler(_ req: Request) throws -> EventLoopFuture<Category> {
         let updatedCat = try req.content.decode(Category.self)
         return Category.find(req.parameters.get("categoryID"), on: req.db).unwrap(or: Abort(.notFound)).flatMap { cat in
