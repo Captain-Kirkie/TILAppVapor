@@ -27,6 +27,9 @@ public func configure(_ app: Application) throws {
     // add category
     app.migrations.add(CreateCategory())
     
+    // AcronymCategoryPivot
+    app.migrations.add(CreateAcronymCategoryPivot())
+    
     // register routes
     try routes(app)
     

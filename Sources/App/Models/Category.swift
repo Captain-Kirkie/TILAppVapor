@@ -8,6 +8,9 @@ final class Category: Model {
     @Field(key: "name")
     var name: String
         
+    @Siblings(through: AcronymCategoryPivot.self, from: \.$category, to: \.$acronym)
+    var acronyms: [Acronym]
+    
     // fluent uses empty init when construcing models from db
     init() {}
     

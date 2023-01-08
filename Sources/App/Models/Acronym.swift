@@ -18,6 +18,10 @@ final class Acronym: Model {
     @Parent(key: "userID")
     var user: User
     
+    //        pivot                                from to models
+    @Siblings(through: AcronymCategoryPivot.self, from: \.$acronym, to: \.$category)
+    var categories: [Category]
+    
     // fluent uses empty init when construcing models from db
     init() {}
     
