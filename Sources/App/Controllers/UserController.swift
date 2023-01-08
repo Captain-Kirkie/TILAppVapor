@@ -6,6 +6,7 @@ struct UserController: RouteCollection {
         userRoutes.get(":userID", use: getByID)
         // create user
         userRoutes.post(use: createHandler)
+        userRoutes.put(":userID", use: updateHandler)
     }
     
     //MARK: GET
@@ -22,6 +23,15 @@ struct UserController: RouteCollection {
         let user = try  req.content.decode(User.self) // decode the user
         // save it to the db
         return user.save(on: req.db).map { user }
+    }
+    
+    func updateHandler(_ req: Request) throws -> EventLoopFuture<User> {
+        let updatedUser = try req.content.decode(User.self)
+        return User.find(req.parameters.get("userID"), on: req.db).unwrap(or: Abort(.notFound)).flatMap { user in
+            user.name = updatedUser.name
+            user.userName = updatedUser.userName
+            return user.save(on: req.db).map { user }
+        }
     }
     
 }
