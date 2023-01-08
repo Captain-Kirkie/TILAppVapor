@@ -21,6 +21,9 @@ public func configure(_ app: Application) throws {
     // add user
     app.migrations.add(CreateUser())
     
+    // add category
+    app.migrations.add(CreateCategory())
+    
     // register routes
     try routes(app)
     
