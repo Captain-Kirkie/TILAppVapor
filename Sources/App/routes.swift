@@ -7,4 +7,9 @@ func routes(_ app: Application) throws {
     let acronymsController = AcronymsController()
     try app.register(collection: acronymsController)
     
+    
+    // register your user controller
+     let userController = UserController()
+     try app.register(collection: userController)
+    
 }
