@@ -1,4 +1,5 @@
 import Vapor
+import Fluent
 
 struct AcronymsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws { // boot comes from RouteCollection, configures routes
@@ -17,6 +18,11 @@ struct AcronymsController: RouteCollection {
         
         // add categories
         acronymsRoutes.post(":acronymID","categories", ":categoryID", use: addCategoriesHandler)
+        
+        // handle search
+        acronymsRoutes.get("search", use: searchHandler)
+        
+        
     }
     
     func getAllHandler(_ req: Request) throws -> EventLoopFuture<[Acronym]> {
@@ -73,8 +79,20 @@ struct AcronymsController: RouteCollection {
             // create a link between models
             acronym.$categories.attach(category, on: req.db).transform(to: .created)
         }
-            
-        
+    }
+    
+    func searchHandler(_ req: Request) throws -> EventLoopFuture<[Acronym]> {
+        // looking for term search param
+        guard let searchTerm = req.query[String.self, at: "term"] else {
+            throw Abort(.badRequest)
+        }
+        print(searchTerm)
+        // groups used for or terms?
+       // importing fluent lets you use the syntactic sugar
+        return Acronym.query(on: req.db).group(.or) { or in
+            or.filter(\.$short == searchTerm)
+            or.filter(\.$long == searchTerm)
+        }.all()
     }
 }
 
