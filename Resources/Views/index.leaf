@@ -7,8 +7,7 @@
     <title>#(title) | Acronyms</title>
 </head>
 <body>
-    <h1>#(content) | Hello world</h1>
-
+    <h1>These are the acronyms</h1>
     #if(acronyms):
         <table>
             <thead>
@@ -16,7 +15,10 @@
             </thead>
             <tbody>
                 #for(acronym in acronyms):
-                    <tr><td>#(acronym.short)</td><td>#(acronym.long)</td></tr>
+                    <tr>
+                        <td><a href="/acronyms/#(acronym.id)"/>#(acronym.short)</td>
+                        <td>#(acronym.long)</td>
+                    </tr>
                 #endfor
             </tbody>
         </table>
