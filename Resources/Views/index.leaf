@@ -1,29 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#(title) | Acronyms</title>
-</head>
-<body>
-    <h1>These are the acronyms</h1>
-    #if(acronyms):
-        <table>
-            <thead>
-                <tr><th>Long</th><th>Short</th></tr>
-            </thead>
-            <tbody>
-                #for(acronym in acronyms):
-                    <tr>
-                        <td><a href="/acronyms/#(acronym.id)"/>#(acronym.short)</td>
-                        <td>#(acronym.long)</td>
-                    </tr>
-                #endfor
-            </tbody>
-        </table>
 
-    #else:
-        <h2>There are no acronyms yet</h2>
-</body>
-</html>
+#extend("base"):
+    #export("content"):
+        <h1>Acronyms</h1>
+        #if(acronyms):
+            <table>
+                <thead>
+                    <tr><th>Short</th><th>Long</th></tr>
+                </thead>
+                <tbody>
+                    #for(acronym in acronyms):
+                        <tr>
+                            <td><a href="/acronyms/#(acronym.id)"/>#(acronym.short)</td>
+                            <td>#(acronym.long)</td>
+                        </tr>
+                    #endfor
+                </tbody>
+            </table>
+        #else:
+            <h2>There are no acronyms yet</h2>
+        #endif
+    #endexport
+#endextend
