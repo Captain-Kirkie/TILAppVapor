@@ -1,8 +1,9 @@
-
 #extend("base"):
     #export("content"):
         <h1>#(acronym.short)</h1>
-        <h1>#(acronym.long)</h1>
-    <p>Created by #(user.name)</p>
+
+        <h2>#(acronym.long)</h2>
+
+        <p>Created by <a href="/users/#(user.id)">#(user.name)</a></p>
     #endexport
 #endextend

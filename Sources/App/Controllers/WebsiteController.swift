@@ -4,11 +4,12 @@ struct WebsiteController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         routes.get(use: indexHandler)
         routes.get("acronyms", ":acronymID", use: acronymHandler)
+        routes.get("users", ":userID", use: userHandler)
     }
     
     func indexHandler(_ req: Request) throws -> EventLoopFuture<View> {
         Acronym.query(on: req.db).all().flatMap{ acronyms in
-            let context = IndexContext(title: "Homepage", acronyms: acronyms.isEmpty ? nil : acronyms)
+            let context = IndexContext(title: "Homepage", acronyms: acronyms)
             return req.view.render("index", context)
         }
     }
@@ -21,12 +22,27 @@ struct WebsiteController: RouteCollection {
             }
         }
     }
+    
+    func userHandler(_ req: Request) throws -> EventLoopFuture<View> {
+        User.find(req.parameters.get("userID"), on: req.db).unwrap(or: Abort(.notFound)).flatMap { user in
+            user.$acronyms.get(on: req.db).flatMap { acronyms in
+                let context = UserContext(title: user.name, user: user, acronyms: acronyms)
+                return req.view.render("user", context)
+            }
+        }
+    }
+}
+
+struct UserContext: Encodable {
+    let title: String
+    let user: User
+    let acronyms: [Acronym]
 }
 
 
 struct IndexContext: Encodable {
     let title: String
-    let acronyms: [Acronym]?
+    let acronyms: [Acronym]
 }
 
 struct AcronymContext: Encodable {
