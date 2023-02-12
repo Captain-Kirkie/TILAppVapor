@@ -38,7 +38,6 @@ struct WebsiteController: RouteCollection {
             let context = AllUsersContext(title: "All Users", users: users)
             return req.view.render("allUsers", context)
         }
-        
     }
 }
 
