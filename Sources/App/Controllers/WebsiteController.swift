@@ -5,6 +5,7 @@ struct WebsiteController: RouteCollection {
         routes.get(use: indexHandler)
         routes.get("acronyms", ":acronymID", use: acronymHandler)
         routes.get("users", ":userID", use: userHandler)
+        routes.get("users", use: allUserHandler)
     }
     
     func indexHandler(_ req: Request) throws -> EventLoopFuture<View> {
@@ -31,13 +32,16 @@ struct WebsiteController: RouteCollection {
             }
         }
     }
+    
+    func allUserHandler(_ req: Request) throws -> EventLoopFuture<View> {
+        User.query(on: req.db).all().flatMap{ users in
+            let context = AllUsersContext(title: "All Users", users: users)
+            return req.view.render("allUsers", context)
+        }
+        
+    }
 }
 
-struct UserContext: Encodable {
-    let title: String
-    let user: User
-    let acronyms: [Acronym]
-}
 
 
 struct IndexContext: Encodable {
