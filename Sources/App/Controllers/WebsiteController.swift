@@ -19,8 +19,11 @@ struct WebsiteController: RouteCollection {
     
     func acronymHandler(_ req: Request) throws -> EventLoopFuture<View> {
         Acronym.find(req.parameters.get("acronymID"), on: req.db).unwrap(or: Abort(.notFound)).flatMap{ acronym in
-            acronym.$user.get(on: req.db).flatMap{ user in
-                let context = AcronymContext(title: acronym.long, acronym: acronym, user: user)
+            let userFuture = acronym.$user.get(on: req.db)
+            let categoriesFuture = acronym.$categories.get(on: req.db)
+            
+            return userFuture.and(categoriesFuture).flatMap{ user, categories in
+                let context = AcronymContext(title: acronym.long, acronym: acronym, user: user, categories: categories)
                 return req.view.render("acronym", context)
             }
         }
@@ -70,6 +73,7 @@ struct AcronymContext: Encodable {
     let title: String
     let acronym: Acronym
     let user: User
+    let categories: [Category]
 }
 
 struct UserContext: Encodable {
