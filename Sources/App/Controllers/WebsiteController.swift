@@ -6,6 +6,8 @@ struct WebsiteController: RouteCollection {
         routes.get("acronyms", ":acronymID", use: acronymHandler)
         routes.get("users", ":userID", use: userHandler)
         routes.get("users", use: allUserHandler)
+        routes.get("categories", ":categoryID", use: categoryHandler)
+        routes.get("categories", use: allCategoryHandler)
     }
     
     func indexHandler(_ req: Request) throws -> EventLoopFuture<View> {
@@ -39,6 +41,22 @@ struct WebsiteController: RouteCollection {
             return req.view.render("allUsers", context)
         }
     }
+    
+    func categoryHandler(_ req: Request) throws -> EventLoopFuture<View> {
+        Category.find(req.parameters.get("categoryID"), on: req.db).unwrap(or: Abort(.notFound)).flatMap { category in
+            category.$acronyms.get(on: req.db).flatMap { acronyms in
+                let context = CategoryContext( title: category.name, category: category, acronyms: acronyms)
+                return req.view.render("category", context)
+            }
+        }
+    }
+    
+    func allCategoryHandler(_ req: Request) throws -> EventLoopFuture<View> {
+        Category.query(on: req.db).all().flatMap { categories in
+            let context = AllCategorysContext(title: "All Categories", categories: categories)
+            return req.view.render("allCategories", context)
+        }
+    }
 }
 
 
@@ -63,4 +81,16 @@ struct UserContext: Encodable {
 struct AllUsersContext: Encodable {
     let title: String
     let users: [User]
+}
+
+struct AllCategorysContext: Encodable {
+    let title: String
+    let categories: [Category]
+}
+
+
+struct CategoryContext: Encodable {
+    let title: String
+    let category: Category
+    let acronyms: [Acronym]
 }
