@@ -8,6 +8,8 @@ struct WebsiteController: RouteCollection {
         routes.get("users", use: allUserHandler)
         routes.get("categories", ":categoryID", use: categoryHandler)
         routes.get("categories", use: allCategoryHandler)
+        routes.get("acronyms", "create", use: createAcronymHandler)
+        routes.post("acronyms", "create", use: createAcronymPostHandler)
     }
     
     func indexHandler(_ req: Request) throws -> EventLoopFuture<View> {
@@ -60,6 +62,22 @@ struct WebsiteController: RouteCollection {
             return req.view.render("allCategories", context)
         }
     }
+    
+    func createAcronymHandler(_ req: Request) throws -> EventLoopFuture<View> {
+          User.query(on: req.db).all().flatMap { users in
+              let context = CreateAcronymContext(title: "Create An Acronym", users: users)
+              return req.view.render("createAcronym", context)
+          }
+      }
+    
+    func createAcronymPostHandler(_ req: Request) throws -> EventLoopFuture<Response> {
+        let data = try req.content.decode(CreateAcronymData.self)
+        let acronym = Acronym(short: data.short, long: data.long, userID: data.userID)
+        return acronym.save(on: req.db).flatMapThrowing {
+            let id = try acronym.requireID()
+            return req.redirect(to: "/acronyms/\(id)")
+        }
+    }
 }
 
 
@@ -98,3 +116,9 @@ struct CategoryContext: Encodable {
     let category: Category
     let acronyms: [Acronym]
 }
+
+struct CreateAcronymContext: Encodable {
+    let title: String
+    let users: [User]
+}
+
