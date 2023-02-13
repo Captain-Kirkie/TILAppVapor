@@ -13,5 +13,9 @@
             #endfor
         </ul>
         #endif
+        <form method="post" action="/acronyms/#(acronym.id)/delete">
+            <a class="btn btn-primary" href="/acronyms/#(acronym.id)/edit" role="button">Edit</a>
+            <input class="btn btn-danger" type="submit" value="Delete">
+        </form>
     #endexport
 #endextend
