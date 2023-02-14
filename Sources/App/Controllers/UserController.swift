@@ -24,6 +24,11 @@ struct UserController: RouteCollection {
         
         // get the acronyms of a specific user
         userRoutes.get(":userID", "acronyms", use: getAcronyms)
+        
+        // auth middleware
+        let basicAuthMiddleware = User.authenticator()
+        let basicAuthGroup = userRoutes.grouped(basicAuthMiddleware)
+        basicAuthGroup.post("login", use: loginHandler)
     }
     
     //MARK: GET
@@ -57,6 +62,12 @@ struct UserController: RouteCollection {
         User.find(req.parameters.get("userID"), on: req.db).unwrap(or: Abort(.notFound)).flatMap{ user in
             user.$acronyms.get(on: req.db) // get Acronym array
         }
+    }
+    
+    func loginHandler(_ req: Request) throws -> EventLoopFuture<Token> {
+        let user = try req.auth.require(User.self)
+        let token = try Token.generate(for: user)
+        return token.save(on: req.db).map { token }
     }
     
 }

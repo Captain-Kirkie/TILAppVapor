@@ -75,7 +75,7 @@ struct WebsiteController: RouteCollection {
     
     func createAcronymPostHandler(_ req: Request) throws -> EventLoopFuture<Response> {
         let data = try req.content.decode(CreateAcronymData.self)
-        let acronym = Acronym(short: data.short, long: data.long, userID: data.userID)
+        let acronym = Acronym(short: data.short, long: data.long, userID: UUID())
         return acronym.save(on: req.db).flatMapThrowing {
             let id = try acronym.requireID()
             return req.redirect(to: "/acronyms/\(id)")
