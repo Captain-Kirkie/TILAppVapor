@@ -10,7 +10,7 @@ final class User: Model {
     var name: String
     
     @Field(key: "username")
-    var userName: String
+    var username: String
     
     // user has one to many relationship with Acronym.... a user can hold many acronymsØ
     @Children(for: \.$user)
@@ -24,7 +24,7 @@ final class User: Model {
     init(id: UUID? = nil, name: String, username: String, password: String) {
         self.id = id
         self.name = name
-        self.userName = username
+        self.username = username
         self.password = password
     }
     
@@ -42,7 +42,7 @@ final class User: Model {
 // make new model conform to content
 extension User: Content {
     func convertToPublic() -> User.Public {
-        User.Public(id: self.id, name: self.name, username: self.userName)
+        User.Public(id: self.id, name: self.name, username: self.username)
     }
 }
 // convert future user into future public.user
@@ -68,10 +68,14 @@ extension EventLoopFuture where Value == Array<User> {
 }
 
 extension User: ModelAuthenticatable {
-    static let usernameKey = \User.$userName
+    static let usernameKey = \User.$username
     static let passwordHashKey = \User.$password
 
     func verify(password: String) throws -> Bool {
         try Bcrypt.verify( password, created: self.password)
     }
 }
+
+// conform to authentication protocols
+extension User: ModelCredentialsAuthenticatable {}
+extension User: ModelSessionAuthenticatable {}

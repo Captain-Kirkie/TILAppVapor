@@ -111,7 +111,6 @@ struct AcronymsController: RouteCollection {
 
 // domain transfer object (DTO) representation of data we want to send or receive
 struct CreateAcronymData: Content {
-    let userID: UUID
     let short: String
     let long: String
 }

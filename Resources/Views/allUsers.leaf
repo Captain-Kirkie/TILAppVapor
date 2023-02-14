@@ -10,7 +10,7 @@
                     #for(user in users):
                         <tr>
                             <td><a href="/users/#(user.id)">#(user.name)</a></td>
-                            <td>#(user.userName)</td>
+                            <td>#(user.username)</td>
                         </tr>
                     #endfor
                 </tbody>

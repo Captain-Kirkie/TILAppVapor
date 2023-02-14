@@ -53,7 +53,7 @@ struct UserController: RouteCollection {
         let updatedUser = try req.content.decode(User.self)
         return User.find(req.parameters.get("userID"), on: req.db).unwrap(or: Abort(.notFound)).flatMap { user in
             user.name = updatedUser.name
-            user.userName = updatedUser.userName
+            user.username = updatedUser.username
             return user.save(on: req.db).map { user.convertToPublic() }
         }
     }

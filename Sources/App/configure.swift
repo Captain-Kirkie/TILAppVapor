@@ -7,6 +7,7 @@ import Leaf
 public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory)) // for serving static files?
+    app.middleware.use(app.sessions.middleware) // for serving static files?
     app.logger.logLevel = .debug
     app.databases.use(.postgres(
         hostname: Environment.get("DATABASE_HOST") ?? "localhost",
